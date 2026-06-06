@@ -1,29 +1,35 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 import SectionHeader from "@/components/SectionHeader";
 import { ShieldIcon } from "@/components/icons";
 import { PROBLEMS } from "@/lib/constants";
 
 export default function ProblemSection() {
-  // Variabel animasi untuk efek muncul satu per satu
-  const containerVariants = {
+  // Animasi untuk container (stagger effect)
+  const containerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: { staggerChildren: 0.2 },
+      transition: {
+        staggerChildren: 0.2,
+      },
     },
   };
 
-  const itemVariants = {
+  // Animasi untuk item (card)
+  const itemVariants: Variants = {
     hidden: { opacity: 0, y: 30 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] },
+    },
   };
 
   return (
-    <section className="section-padding bg-[#f8fafc]"> {/* Sedikit penyesuaian background agar lebih bersih */}
+    <section className="py-20 lg:py-32 bg-[#f8fafc]">
       <div className="section-container">
-        
         {/* Header Section dengan Animasi */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -39,7 +45,7 @@ export default function ProblemSection() {
         </motion.div>
 
         {/* Grid Card dengan Staggered Animation */}
-        <motion.div 
+        <motion.div
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
@@ -47,13 +53,13 @@ export default function ProblemSection() {
           className="grid gap-8 md:grid-cols-2 lg:grid-cols-3"
         >
           {PROBLEMS.map((problem, index) => (
-            <motion.article 
-              key={problem.title} 
+            <motion.article
+              key={problem.title}
               variants={itemVariants}
               className="group flex h-full flex-col rounded-[32px] border border-[#e2e8f0] bg-white p-8 shadow-sm transition-all hover:border-[#0064e0] hover:shadow-xl md:p-10"
             >
               <div className="mb-8 flex items-center gap-4">
-                {/* Logo/Icon yang lebih menonjol */}
+                {/* Logo/Icon */}
                 <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#f1f4f7] text-[#0064e0] group-hover:bg-[#0064e0] group-hover:text-white transition-colors">
                   <ShieldIcon className="h-8 w-8" />
                 </div>
@@ -64,7 +70,7 @@ export default function ProblemSection() {
                 </div>
               </div>
 
-              {/* Ukuran Font disamakan dengan gaya HeroSection */}
+              {/* Ukuran Font sesuai standar HeroSection */}
               <h3 className="text-[24px] font-black tracking-tight text-[#0a1317] leading-tight">
                 {problem.title}
               </h3>
