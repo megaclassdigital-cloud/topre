@@ -1,8 +1,8 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import { motion } from "framer-motion";
 import ButtonLink from "@/components/ButtonLink";
-import SectionHeader from "@/components/SectionHeader";
 import { CheckIcon, WhatsappIcon } from "@/components/icons";
 import { NEED_TYPES, TEMPERATURE_NEEDS } from "@/lib/constants";
 import { getWhatsappLink } from "@/lib/whatsapp";
@@ -25,13 +25,7 @@ type FormState = {
 };
 
 const initialFormState: FormState = {
-  name: "",
-  company: "",
-  phone: "",
-  city: "",
-  need_type: "",
-  temperature_need: "",
-  message: "",
+  name: "", company: "", phone: "", city: "", need_type: "", temperature_need: "", message: "",
 };
 
 export default function LeadFormSection() {
@@ -46,184 +40,118 @@ export default function LeadFormSection() {
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setError("");
-    setSuccess(false);
-
-    const phoneRegex = /^[0-9+\-\s]+$/;
-
-    if (form.name.trim().length < 2) {
-      setError("Nama minimal 2 karakter.");
-      return;
-    }
-
-    if (!form.phone.trim()) {
-      setError("Nomor WhatsApp wajib diisi.");
-      return;
-    }
-
-    if (!phoneRegex.test(form.phone.trim())) {
-      setError("Nomor WhatsApp hanya boleh angka, +, spasi, atau tanda -.");
-      return;
-    }
-
+    setError(""); setSuccess(false);
+    if (form.name.trim().length < 2) { setError("Nama minimal 2 karakter."); return; }
+    if (!form.phone.trim()) { setError("Nomor WhatsApp wajib diisi."); return; }
     setLoading(true);
-
     try {
-      const response = await fetch("/api/submit-leads", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, source: "topre-landing-page" }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Submit failed");
-      }
-
-      setSuccess(true);
-      setForm(initialFormState);
+      await fetch("/api/submit-leads", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...form, source: "topre-landing-page" }) });
+      setSuccess(true); setForm(initialFormState);
     } catch {
-      setError("Terjadi kendala saat mengirim data. Silakan coba lagi atau hubungi WhatsApp sales.");
+      setError("Terjadi kendala saat mengirim data.");
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <section id="inquiry" className="section-padding bg-topre-soft">
+    <section id="inquiry" className="bg-[#f8fafc] py-20 lg:py-32">
       <div className="section-container">
-        <SectionHeader
-          label="Form Inquiry"
-          title="Konsultasikan Kebutuhan Unit Anda"
-          description="Isi form berikut untuk menyampaikan kebutuhan Anda. Data akan langsung diterima oleh sales untuk ditindaklanjuti lebih cepat."
-        />
+        
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          className="mb-16 text-center"
+        >
+          <span className="inline-flex items-center gap-2 rounded-full border border-[#0064e0]/20 bg-[#0064e0]/5 px-6 py-2 text-[12px] font-black uppercase tracking-[0.25em] text-[#0064e0]">
+            Form Inquiry
+          </span>
+          <h2 className="mt-6 text-[32px] md:text-[42px] font-black tracking-tight text-[#0a1317] leading-tight">
+            Konsultasikan Kebutuhan Unit Anda
+          </h2>
+          <p className="mt-6 text-[18px] leading-[1.6] text-slate-600 max-w-2xl mx-auto">
+            Isi form berikut untuk menyampaikan kebutuhan Anda. Data akan langsung diterima oleh sales untuk ditindaklanjuti lebih cepat.
+          </p>
+        </motion.div>
 
-        <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
-          <div className="rounded-4xl border border-topre-border bg-white p-6 shadow-card md:p-8">
-            <h3 className="text-2xl font-black tracking-tight text-topre-navy">
+        <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] items-start">
+          <motion.div 
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="rounded-[32px] border border-slate-200 bg-white p-8 lg:p-10 shadow-sm"
+          >
+            <h3 className="text-[24px] font-black leading-snug text-[#0a1317]">
               Informasi yang Anda kirim membantu sales memahami kebutuhan awal Anda.
             </h3>
-            <div className="mt-6 grid gap-4">
+            <div className="mt-8 grid gap-4">
               {bullets.map((bullet) => (
-                <div key={bullet} className="flex items-center gap-3 rounded-2xl border border-topre-border bg-white px-4 py-3">
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-topre-light text-topre-primary">
+                <div key={bullet} className="flex items-center gap-4 rounded-2xl border border-slate-100 bg-slate-50 px-6 py-4">
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#0064e0]/10 text-[#0064e0]">
                     <CheckIcon className="h-4 w-4" />
                   </span>
-                  <span className="text-sm font-bold text-slate-700 md:text-base">{bullet}</span>
+                  <span className="text-[18px] font-semibold text-slate-700">{bullet}</span>
                 </div>
               ))}
             </div>
-          </div>
+          </motion.div>
 
-          <div className="rounded-4xl border border-topre-border bg-white p-5 shadow-soft md:p-8">
-            <form onSubmit={handleSubmit} className="grid gap-4" noValidate>
-              <div className="grid gap-4 md:grid-cols-2">
+          <motion.div 
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="rounded-[32px] border border-slate-200 bg-white p-8 lg:p-10 shadow-sm"
+          >
+            <form onSubmit={handleSubmit} className="grid gap-6" noValidate>
+              <div className="grid gap-6 md:grid-cols-2">
                 <Field label="Nama" required>
-                  <input
-                    value={form.name}
-                    onChange={(event) => updateField("name", event.target.value)}
-                    className="focus-ring w-full rounded-2xl border border-topre-border px-4 py-3 text-sm text-topre-navy placeholder:text-slate-400"
-                    placeholder="Masukkan nama Anda"
-                    autoComplete="name"
-                  />
+                  <input value={form.name} onChange={(e) => updateField("name", e.target.value)} className="h-12 w-full rounded-xl border border-slate-300 px-4 text-[16px] focus:ring-2 focus:ring-[#0064e0]/20 outline-none transition" placeholder="Nama Anda" />
                 </Field>
-
                 <Field label="Nama Perusahaan">
-                  <input
-                    value={form.company}
-                    onChange={(event) => updateField("company", event.target.value)}
-                    className="focus-ring w-full rounded-2xl border border-topre-border px-4 py-3 text-sm text-topre-navy placeholder:text-slate-400"
-                    placeholder="Contoh: PT / CV / Nama Bisnis"
-                    autoComplete="organization"
-                  />
+                  <input value={form.company} onChange={(e) => updateField("company", e.target.value)} className="h-12 w-full rounded-xl border border-slate-300 px-4 text-[16px] focus:ring-2 focus:ring-[#0064e0]/20 outline-none transition" placeholder="PT / CV" />
                 </Field>
               </div>
 
-              <div className="grid gap-4 md:grid-cols-2">
+              <div className="grid gap-6 md:grid-cols-2">
                 <Field label="Nomor WhatsApp" required>
-                  <input
-                    value={form.phone}
-                    onChange={(event) => updateField("phone", event.target.value)}
-                    className="focus-ring w-full rounded-2xl border border-topre-border px-4 py-3 text-sm text-topre-navy placeholder:text-slate-400"
-                    placeholder="Contoh: 08xxxxxxxxxx"
-                    autoComplete="tel"
-                    inputMode="tel"
-                  />
+                  <input value={form.phone} onChange={(e) => updateField("phone", e.target.value)} className="h-12 w-full rounded-xl border border-slate-300 px-4 text-[16px] focus:ring-2 focus:ring-[#0064e0]/20 outline-none transition" placeholder="08xxxxxxxx" />
                 </Field>
-
                 <Field label="Kota / Area">
-                  <input
-                    value={form.city}
-                    onChange={(event) => updateField("city", event.target.value)}
-                    className="focus-ring w-full rounded-2xl border border-topre-border px-4 py-3 text-sm text-topre-navy placeholder:text-slate-400"
-                    placeholder="Contoh: Jakarta, Tangerang, Bekasi"
-                    autoComplete="address-level2"
-                  />
+                  <input value={form.city} onChange={(e) => updateField("city", e.target.value)} className="h-12 w-full rounded-xl border border-slate-300 px-4 text-[16px] focus:ring-2 focus:ring-[#0064e0]/20 outline-none transition" placeholder="Contoh: Jakarta" />
                 </Field>
               </div>
 
-              <div className="grid gap-4 md:grid-cols-2">
+              <div className="grid gap-6 md:grid-cols-2">
                 <Field label="Jenis Kebutuhan">
-                  <select
-                    value={form.need_type}
-                    onChange={(event) => updateField("need_type", event.target.value)}
-                    className="focus-ring w-full rounded-2xl border border-topre-border bg-white px-4 py-3 text-sm text-topre-navy"
-                  >
-                    <option value="">Pilih jenis kebutuhan</option>
-                    {NEED_TYPES.map((item) => (
-                      <option key={item} value={item}>{item}</option>
-                    ))}
+                  <select value={form.need_type} onChange={(e) => updateField("need_type", e.target.value)} className="h-12 w-full rounded-xl border border-slate-300 bg-white px-4 text-[16px] focus:ring-2 focus:ring-[#0064e0]/20 outline-none transition">
+                    <option value="">Pilih kebutuhan</option>
+                    {NEED_TYPES.map((item) => <option key={item} value={item}>{item}</option>)}
                   </select>
                 </Field>
-
                 <Field label="Kebutuhan Suhu">
-                  <select
-                    value={form.temperature_need}
-                    onChange={(event) => updateField("temperature_need", event.target.value)}
-                    className="focus-ring w-full rounded-2xl border border-topre-border bg-white px-4 py-3 text-sm text-topre-navy"
-                  >
-                    <option value="">Pilih kebutuhan suhu</option>
-                    {TEMPERATURE_NEEDS.map((item) => (
-                      <option key={item} value={item}>{item}</option>
-                    ))}
+                  <select value={form.temperature_need} onChange={(e) => updateField("temperature_need", e.target.value)} className="h-12 w-full rounded-xl border border-slate-300 bg-white px-4 text-[16px] focus:ring-2 focus:ring-[#0064e0]/20 outline-none transition">
+                    <option value="">Pilih suhu</option>
+                    {TEMPERATURE_NEEDS.map((item) => <option key={item} value={item}>{item}</option>)}
                   </select>
                 </Field>
               </div>
 
               <Field label="Catatan Kebutuhan">
-                <textarea
-                  value={form.message}
-                  onChange={(event) => updateField("message", event.target.value)}
-                  className="focus-ring min-h-32 w-full resize-y rounded-2xl border border-topre-border px-4 py-3 text-sm text-topre-navy placeholder:text-slate-400"
-                  placeholder="Ceritakan kebutuhan produk, kapasitas, atau rute distribusi Anda"
-                />
+                <textarea value={form.message} onChange={(e) => updateField("message", e.target.value)} className="min-h-[120px] w-full rounded-xl border border-slate-300 p-4 text-[16px] focus:ring-2 focus:ring-[#0064e0]/20 outline-none transition" placeholder="Ceritakan kebutuhan spesifik Anda..." />
               </Field>
 
-              {error && (
-                <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">
-                  {error}
-                </div>
-              )}
+              {error && <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-[14px] font-bold text-red-700">{error}</div>}
+              {success && <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-[14px] font-bold text-emerald-700">Terima kasih. Data Anda sudah terkirim.</div>}
 
-              {success && (
-                <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-700">
-                  Terima kasih. Data Anda sudah terkirim. Tim sales akan segera menghubungi Anda.
-                </div>
-              )}
-
-              <button
-                type="submit"
-                disabled={loading}
-                className="focus-ring inline-flex min-h-12 w-full items-center justify-center rounded-full bg-topre-primary px-6 py-3 text-sm font-bold text-white transition hover:bg-topre-navy disabled:cursor-not-allowed disabled:opacity-70"
-              >
+              <button type="submit" disabled={loading} className="h-12 w-full rounded-full bg-[#0064e0] text-[16px] font-black text-white hover:bg-[#0457cb] transition disabled:opacity-50">
                 {loading ? "Mengirim..." : "Kirim Inquiry"}
               </button>
-
-              <ButtonLink href={getWhatsappLink()} variant="secondary" target="_blank" rel="noreferrer" className="w-full">
-                <WhatsappIcon className="mr-2 h-5 w-5" />
-                Lanjut Chat WhatsApp
-              </ButtonLink>
             </form>
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>
@@ -233,9 +161,8 @@ export default function LeadFormSection() {
 function Field({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode }) {
   return (
     <label className="grid gap-2">
-      <span className="text-sm font-bold text-topre-navy">
-        {label}
-        {required && <span className="ml-1 text-red-600">*</span>}
+      <span className="text-[14px] font-black uppercase tracking-wider text-[#0a1317]">
+        {label} {required && <span className="text-red-500">*</span>}
       </span>
       {children}
     </label>

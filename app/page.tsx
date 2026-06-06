@@ -6,6 +6,7 @@ import LeadFormSection from "@/components/LeadFormSection";
 import Navbar from "@/components/Navbar";
 import ProblemSection from "@/components/ProblemSection";
 import ProductSection from "@/components/ProductSection";
+import ProductGallerySection from "@/components/ProductGallerySection";
 import SalesContactSection from "@/components/SalesContactSection";
 import UseCaseSection from "@/components/UseCaseSection";
 import WhyTopreSection from "@/components/WhyTopreSection";
@@ -17,6 +18,7 @@ export default function HomePage() {
       <HeroSection />
       <ProblemSection />
       <ProductSection />
+      <ProductGallerySection />
       <WhyTopreSection />
       <UseCaseSection />
       <LeadFormSection />

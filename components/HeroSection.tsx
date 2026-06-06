@@ -2,12 +2,9 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import { motion, AnimatePresence } from "framer-motion"; // Import Framer Motion
 import ButtonLink from "@/components/ButtonLink";
-import {
-  ArrowRightIcon,
-  CheckIcon,
-  WhatsappIcon,
-} from "@/components/icons";
+import { ArrowRightIcon, CheckIcon, WhatsappIcon } from "@/components/icons";
 import { getWhatsappLink } from "@/lib/whatsapp";
 
 const bullets = [
@@ -17,22 +14,10 @@ const bullets = [
 ];
 
 const heroImages = [
-  {
-    src: "/images/hero/hero-topre-1.jpg",
-    alt: "Refrigerated vehicle Topre untuk distribusi produk frozen dan chilled",
-  },
-  {
-    src: "/images/hero/hero-topre-2.webp",
-    alt: "Box pendingin Topre untuk kebutuhan distribusi cold chain",
-  },
-  {
-    src: "/images/hero/hero-topre-3.jpg",
-    alt: "Unit kendaraan pendingin Topre dengan insulated box",
-  },
-  {
-    src: "/images/hero/hero-topre-4.jpg",
-    alt: "Refrigerated truck Topre untuk kebutuhan bisnis frozen food dan chilled product",
-  },
+  { src: "/images/hero/hero-topre-3.jpg", alt: "Refrigerated vehicle", title: "Integrated Refrigerated Vehicle", desc: "Solusi kendaraan pendingin untuk kebutuhan distribusi frozen, chilled, dan cold chain." },
+  { src: "/images/hero/hero-topre-2.webp", alt: "Box pendingin Topre", title: "FL Series & XV Series", desc: "Teknologi pendingin terpercaya dengan akurasi suhu tinggi untuk cold chain." },
+  { src: "/images/hero/hero-topre-3.jpg", alt: "Unit kendaraan", title: "FL Series & XV Series", desc: "Teknologi pendingin terpercaya dengan akurasi suhu tinggi untuk cold chain." },
+  { src: "/images/hero/hero-topre-1.jpg", alt: "Refrigerated truck", title: "FL Series & XV Series", desc: "Teknologi pendingin terpercaya dengan akurasi suhu tinggi untuk cold chain." },
 ];
 
 export default function HeroSection() {
@@ -41,141 +26,93 @@ export default function HeroSection() {
   useEffect(() => {
     const interval = window.setInterval(() => {
       setActiveImage((current) => (current + 1) % heroImages.length);
-    }, 4200);
-
+    }, 5000);
     return () => window.clearInterval(interval);
   }, []);
 
   return (
-    <section id="beranda" className="relative overflow-hidden bg-white">
-      <div
-        className="absolute left-0 top-0 h-80 w-80 -translate-x-1/2 rounded-full bg-topre-light/70 blur-3xl"
-        aria-hidden="true"
-      />
-      <div
-        className="absolute right-0 top-24 h-80 w-80 translate-x-1/2 rounded-full bg-blue-50 blur-3xl"
-        aria-hidden="true"
-      />
-
-      <div className="section-container grid min-h-[calc(100vh-72px)] items-center gap-12 py-12 md:py-16 lg:grid-cols-[1.04fr_0.96fr] lg:gap-12 lg:py-20">
-        <div className="relative z-10 text-center lg:text-left">
-          <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-topre-light bg-topre-light/70 px-4 py-2 text-sm font-semibold text-topre-primary">
-            <span className="h-1.5 w-1.5 rounded-full bg-topre-yellow" />
+    <section id="beranda" className="bg-[#ffffff] pt-[80px] pb-[96px] lg:pt-[140px] lg:pb-[140px] overflow-hidden">
+      <div className="mx-auto max-w-[1400px] px-6 lg:px-12 grid items-center gap-[64px] lg:grid-cols-[1fr_1fr]">
+        
+        {/* Animasi Konten Kiri */}
+        <motion.div 
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="text-center lg:text-left"
+        >
+          <div className="mb-[24px] inline-flex items-center gap-[12px] rounded-full bg-[#f1f4f7] px-[24px] py-[12px] text-[16px] font-bold text-[#444950]">
+            <span className="h-[12px] w-[12px] rounded-full bg-[#facc15] animate-pulse" />
             Solusi Refrigerated Vehicle untuk Distribusi Frozen & Chilled
           </div>
 
-          <h1 className="mx-auto max-w-4xl text-[34px] font-black leading-[1.08] tracking-tight text-topre-navy sm:text-5xl lg:mx-0 lg:text-[58px]">
-            Solusi Box Pendingin Topre untuk Distribusi Frozen & Chilled
+          <h1 className="text-[52px] font-extrabold leading-[1.1] tracking-tighter text-[#0a1317] md:text-[68px] lg:text-[80px]">
+            Solusi Box Pendingin Topre
           </h1>
 
-          <p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-slate-600 md:text-lg lg:mx-0">
-            Konsultasikan kebutuhan refrigerated vehicle Anda untuk produk
-            frozen, chilled, dan cold chain bersama sales Topre. Dapatkan
-            rekomendasi unit sesuai suhu, kapasitas, dan kebutuhan distribusi
-            bisnis Anda.
+          <p className="mx-auto mt-[32px] max-w-2xl text-[20px] leading-[1.6] text-[#444950] lg:mx-0 lg:text-[24px]">
+            Konsultasikan kebutuhan refrigerated vehicle Anda untuk produk frozen, chilled, dan cold chain bersama sales Topre.
           </p>
 
-          <div className="mx-auto mt-7 grid max-w-xl gap-3 text-left lg:mx-0">
-            {bullets.map((bullet) => (
-              <div
-                key={bullet}
-                className="flex items-center gap-3 rounded-2xl border border-topre-border bg-white px-4 py-3 shadow-card"
+          <div className="mx-auto mt-[48px] grid max-w-xl gap-[20px] text-left lg:mx-0">
+            {bullets.map((bullet, i) => (
+              <motion.div 
+                key={bullet} 
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ delay: i * 0.2 }}
+                className="flex items-center gap-[20px]"
               >
-                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-topre-light text-topre-primary">
-                  <CheckIcon className="h-4 w-4" />
+                <span className="flex h-[36px] w-[36px] shrink-0 items-center justify-center rounded-full bg-[#f1f4f7] text-[#0a1317]">
+                  <CheckIcon className="h-[20px] w-[20px]" />
                 </span>
-                <span className="text-sm font-semibold text-slate-700 md:text-base">
-                  {bullet}
-                </span>
-              </div>
+                <span className="text-[20px] font-bold text-[#1c1e21]">{bullet}</span>
+              </motion.div>
             ))}
           </div>
 
-          <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start">
-            <ButtonLink
-              href={getWhatsappLink()}
-              target="_blank"
-              rel="noreferrer"
-              className="w-full sm:w-auto"
-            >
-              <WhatsappIcon className="mr-2 h-5 w-5" />
+          <div className="mt-[56px] flex flex-col items-center gap-[20px] sm:flex-row sm:justify-center lg:justify-start">
+            <ButtonLink href={getWhatsappLink()} className="w-full sm:w-auto bg-[#000000] text-white rounded-full px-[40px] py-[20px] font-bold hover:bg-[#222] transition-all flex items-center justify-center shadow-lg">
+              <WhatsappIcon className="mr-[12px] h-[24px] w-[24px]" />
               Konsultasi via WhatsApp
             </ButtonLink>
 
-            <ButtonLink href="#inquiry" variant="secondary" className="w-full sm:w-auto">
+            <ButtonLink href="#inquiry" className="w-full sm:w-auto bg-white text-black border-[3px] border-black rounded-full px-[40px] py-[18px] font-bold hover:bg-[#0064e0] hover:text-white hover:border-[#0064e0] transition-all flex items-center justify-center">
               Isi Form Inquiry
-              <ArrowRightIcon className="ml-2 h-4 w-4" />
+              <ArrowRightIcon className="ml-[12px] h-[20px] w-[20px]" />
             </ButtonLink>
           </div>
-        </div>
+        </motion.div>
 
-        <div className="relative z-10 mx-auto w-full max-w-xl lg:max-w-none">
-          <div className="rounded-4xl border border-topre-light bg-white p-4 shadow-soft md:p-6">
-            <div className="mb-5 flex flex-wrap items-center justify-center gap-2 md:justify-between">
-              <span className="rounded-full bg-topre-primary px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-white">
-                Refrigerated Vehicle
-              </span>
-              <span className="rounded-full bg-topre-yellow px-4 py-2 text-xs font-black uppercase tracking-[0.18em] text-topre-navy">
-                FL Series
-              </span>
-              <span className="rounded-full border border-topre-light bg-topre-light px-4 py-2 text-xs font-black uppercase tracking-[0.18em] text-topre-primary">
-                XV Series
-              </span>
-            </div>
-
-            <div className="relative overflow-hidden rounded-3xl border border-topre-border bg-slate-100">
-              <div className="relative aspect-[16/10] w-full">
-                {heroImages.map((image, index) => (
-                  <Image
-                    key={image.src}
-                    src={image.src}
-                    alt={image.alt}
-                    fill
-                    priority={index === 0}
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 560px"
-                    className={`object-cover transition-opacity duration-[1400ms] ease-in-out ${
-                      index === activeImage ? "opacity-100" : "opacity-0"
-                    }`}
-                  />
-                ))}
-
-                <div className="absolute inset-0 bg-gradient-to-t from-topre-navy/45 via-topre-navy/10 to-transparent" />
-
-                <div className="absolute bottom-5 left-5 right-5">
-                  <div className="max-w-md rounded-2xl border border-white/25 bg-white/90 p-4 shadow-card backdrop-blur-md">
-                    <p className="text-xs font-black uppercase tracking-[0.18em] text-topre-primary">
-                      Integrated Refrigerated Vehicle
-                    </p>
-                    <p className="mt-2 text-sm font-semibold leading-6 text-slate-700">
-                      Solusi kendaraan pendingin untuk kebutuhan distribusi
-                      frozen, chilled, dan cold chain.
-                    </p>
+        {/* Animasi Carousel Kanan */}
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.9 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8, delay: 0.3 }}
+          className="relative mx-auto w-full max-w-[640px]"
+        >
+          <div className="relative aspect-[4/3] w-full overflow-hidden rounded-[40px] bg-[#f1f4f7] shadow-2xl">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeImage}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.8 }}
+                className="absolute inset-0"
+              >
+                <Image src={heroImages[activeImage].src} alt={heroImages[activeImage].alt} fill className="object-cover" />
+                <div className="absolute bottom-[32px] left-[32px] right-[32px]">
+                  <div className="rounded-[32px] bg-white/90 p-[32px] border border-white backdrop-blur-md">
+                    <p className="text-[16px] font-bold uppercase tracking-[0.2em] text-[#0064e0] mb-[8px]">{heroImages[activeImage].title}</p>
+                    <p className="text-[18px] font-medium leading-[1.5] text-[#0a1317]">{heroImages[activeImage].desc}</p>
                   </div>
                 </div>
-              </div>
-            </div>
-
-            <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
-              {["FL Series", "XV Series", "Frozen", "Chilled"].map(
-                (label, index) => (
-                  <div
-                    key={label}
-                    className="rounded-2xl border border-topre-border bg-white p-3 text-center shadow-card"
-                  >
-                    <div
-                      className={`mx-auto mb-2 h-1.5 w-8 rounded-full ${
-                        index === 0 ? "bg-topre-yellow" : "bg-topre-light"
-                      }`}
-                    />
-                    <p className="text-xs font-bold uppercase tracking-[0.12em] text-slate-600">
-                      {label}
-                    </p>
-                  </div>
-                )
-              )}
-            </div>
+              </motion.div>
+            </AnimatePresence>
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );
