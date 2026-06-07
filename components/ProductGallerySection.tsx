@@ -5,7 +5,6 @@ import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import SectionHeader from "@/components/SectionHeader";
-import { BrandMark } from "@/components/icons";
 
 const BRANDS = ["Semua", "Hino", "Mitsubishi", "Isuzu", "Lainnya"];
 
@@ -268,15 +267,21 @@ export default function ProductGallerySection() {
   return (
     <section id="galeri" className="py-20 lg:py-32 bg-[#f8fafc]">
       <div className="section-container">
+        {/* Logo dengan background transparan - tanpa bg, border, shadow */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           className="flex justify-center mb-8"
         >
-          <div className="p-3 bg-white rounded-3xl shadow-sm border border-slate-100">
-            <BrandMark />
-          </div>
+          <Image
+            src="/topre.png"
+            alt="Topre Logo"
+            width={160}
+            height={53}
+            className="h-12 w-auto md:h-14"
+            priority
+          />
         </motion.div>
 
         <motion.div

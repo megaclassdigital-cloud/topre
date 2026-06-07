@@ -1,9 +1,10 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 import ButtonLink from "@/components/ButtonLink";
 import SectionHeader from "@/components/SectionHeader";
-import { BrandMark, WhatsappIcon } from "@/components/icons";
+import { WhatsappIcon } from "@/components/icons";
 import { SALES } from "@/lib/constants";
 import { getWhatsappLink } from "@/lib/whatsapp";
 
@@ -36,7 +37,14 @@ export default function SalesContactSection() {
             
             <div className="text-center md:text-left">
               <div className="mb-8 flex justify-center md:justify-start">
-                <BrandMark />
+                <Image
+                  src="/topre.png"
+                  alt="Topre Logo"
+                  width={160}
+                  height={48}
+                  className="h-12 w-auto"
+                  priority
+                />
               </div>
               
               <span className="text-[12px] font-black uppercase tracking-[0.25em] text-[#0064e0]">

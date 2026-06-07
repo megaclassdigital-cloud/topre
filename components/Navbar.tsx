@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import ButtonLink from "@/components/ButtonLink";
-import { BrandMark, CloseIcon, MenuIcon, WhatsappIcon } from "@/components/icons";
+import { CloseIcon, MenuIcon, WhatsappIcon } from "@/components/icons";
 import { NAV_ITEMS } from "@/lib/constants";
 import { getWhatsappLink } from "@/lib/whatsapp";
 
@@ -13,9 +14,18 @@ export default function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-topre-border bg-white/95 backdrop-blur">
-      <nav className="section-container flex h-[72px] items-center justify-between gap-6" aria-label="Main navigation">
+      <nav className="section-container flex h-[80px] items-center justify-between gap-6" aria-label="Main navigation">
+        {/* Logo gambar - ukuran diperbesar */}
         <a href="#beranda" onClick={closeMenu} className="focus-ring rounded-2xl">
-          <BrandMark />
+          <Image
+            src="/topre.png"
+            alt="Topre Logo"
+            width={160}
+            height={53}
+            className="h-12 w-auto md:h-14"
+            priority
+            quality={100}
+          />
         </a>
 
         <div className="hidden items-center gap-8 lg:flex">

@@ -1,4 +1,4 @@
-import { BrandMark } from "@/components/icons";
+import Image from "next/image";
 import { NAV_ITEMS, SALES } from "@/lib/constants";
 
 export default function Footer() {
@@ -7,8 +7,16 @@ export default function Footer() {
       <div className="section-container">
         <div className="grid gap-10 md:grid-cols-3">
           <div>
-            <div className="rounded-3xl bg-white p-4">
-              <BrandMark />
+            {/* Logo gambar - tanpa background putih */}
+            <div className="mb-4">
+              <Image
+                src="/topre.png"
+                alt="Topre Logo"
+                width={140}
+                height={46}
+                className="h-10 w-auto"
+                priority
+              />
             </div>
             <p className="mt-5 text-sm leading-7 text-slate-300">
               Landing page inquiry refrigerated vehicle untuk membantu kebutuhan distribusi frozen, chilled, dan cold chain dengan pendekatan konsultatif yang profesional.
