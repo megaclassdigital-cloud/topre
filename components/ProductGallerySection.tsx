@@ -70,45 +70,74 @@ const GALLERY_DATA = [
 const ProductCard = ({ item }: { item: typeof GALLERY_DATA[0] }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
-  const [direction, setDirection] = useState(0); // -1 = prev, 1 = next
+  const [direction, setDirection] = useState(0);
   const [animationType, setAnimationType] = useState<"slide" | "fade">("fade");
+  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const totalImages = item.images.length;
   const autoSlideInterval = useRef<NodeJS.Timeout | null>(null);
+  const autoPlayTimeout = useRef<NodeJS.Timeout | null>(null);
   const touchStartX = useRef(0);
   const touchEndX = useRef(0);
   const mouseStartX = useRef(0);
   const isDragging = useRef(false);
 
-  // Auto slide (fade)
-  useEffect(() => {
-    if (totalImages > 1 && !isHovered) {
+  const startAutoSlide = () => {
+    if (autoSlideInterval.current) clearInterval(autoSlideInterval.current);
+    if (totalImages > 1 && !isHovered && isAutoPlaying) {
       autoSlideInterval.current = setInterval(() => {
         setAnimationType("fade");
         setCurrentIndex((prev) => (prev + 1) % totalImages);
       }, 5000);
-    } else if (autoSlideInterval.current) {
+    }
+  };
+
+  const stopAutoSlide = () => {
+    if (autoSlideInterval.current) {
       clearInterval(autoSlideInterval.current);
+      autoSlideInterval.current = null;
+    }
+  };
+
+  const pauseAutoSlideTemporarily = () => {
+    if (autoPlayTimeout.current) clearTimeout(autoPlayTimeout.current);
+    setIsAutoPlaying(false);
+    stopAutoSlide();
+    autoPlayTimeout.current = setTimeout(() => {
+      setIsAutoPlaying(true);
+      startAutoSlide();
+    }, 15000);
+  };
+
+  useEffect(() => {
+    if (totalImages > 1 && !isHovered && isAutoPlaying) {
+      startAutoSlide();
+    } else {
+      stopAutoSlide();
     }
     return () => {
-      if (autoSlideInterval.current) clearInterval(autoSlideInterval.current);
+      stopAutoSlide();
+      if (autoPlayTimeout.current) clearTimeout(autoPlayTimeout.current);
     };
-  }, [totalImages, isHovered]);
+  }, [totalImages, isHovered, isAutoPlaying]);
 
   const handlePrev = (e?: React.MouseEvent) => {
     e?.stopPropagation();
+    if (totalImages <= 1) return;
     setDirection(-1);
     setAnimationType("slide");
     setCurrentIndex((prev) => (prev === 0 ? totalImages - 1 : prev - 1));
+    pauseAutoSlideTemporarily();
   };
 
   const handleNext = (e?: React.MouseEvent) => {
     e?.stopPropagation();
+    if (totalImages <= 1) return;
     setDirection(1);
     setAnimationType("slide");
     setCurrentIndex((prev) => (prev === totalImages - 1 ? 0 : prev + 1));
+    pauseAutoSlideTemporarily();
   };
 
-  // Swipe touch
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
   };
@@ -125,7 +154,6 @@ const ProductCard = ({ item }: { item: typeof GALLERY_DATA[0] }) => {
     touchEndX.current = 0;
   };
 
-  // Swipe mouse
   const handleMouseDown = (e: React.MouseEvent) => {
     isDragging.current = true;
     mouseStartX.current = e.clientX;
@@ -144,7 +172,6 @@ const ProductCard = ({ item }: { item: typeof GALLERY_DATA[0] }) => {
     isDragging.current = false;
   };
 
-  // Animasi variants berdasarkan tipe dan arah
   const getInitial = () => {
     if (animationType === "fade") return { opacity: 0 };
     return { x: direction === 1 ? 300 : -300, opacity: 1 };
@@ -173,7 +200,7 @@ const ProductCard = ({ item }: { item: typeof GALLERY_DATA[0] }) => {
       >
         <AnimatePresence mode="wait">
           <motion.div
-            key={currentIndex}
+            key={`${item.id}-${currentIndex}`}
             initial={getInitial()}
             animate={getAnimate()}
             exit={getExit()}
@@ -188,7 +215,6 @@ const ProductCard = ({ item }: { item: typeof GALLERY_DATA[0] }) => {
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               priority={currentIndex === 0}
               onError={(e) => {
-                // Fallback jika gambar gagal load
                 (e.target as HTMLImageElement).src = "/images/placeholder.jpg";
               }}
             />

@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
-import { motion, AnimatePresence } from "framer-motion"; // Import Framer Motion
+import { motion, AnimatePresence } from "framer-motion";
 import ButtonLink from "@/components/ButtonLink";
 import { ArrowRightIcon, CheckIcon, WhatsappIcon } from "@/components/icons";
 import { getWhatsappLink } from "@/lib/whatsapp";
@@ -14,28 +14,81 @@ const bullets = [
 ];
 
 const heroImages = [
-  { src: "/images/hero/hero-topre-3.jpg", alt: "Refrigerated vehicle", title: "Integrated Refrigerated Vehicle", desc: "Solusi kendaraan pendingin untuk kebutuhan distribusi frozen, chilled, dan cold chain." },
-  { src: "/images/hero/hero-topre-2.webp", alt: "Box pendingin Topre", title: "FL Series & XV Series", desc: "Teknologi pendingin terpercaya dengan akurasi suhu tinggi untuk cold chain." },
-  { src: "/images/hero/hero-topre-3.jpg", alt: "Unit kendaraan", title: "FL Series & XV Series", desc: "Teknologi pendingin terpercaya dengan akurasi suhu tinggi untuk cold chain." },
-  { src: "/images/hero/hero-topre-1.jpg", alt: "Refrigerated truck", title: "FL Series & XV Series", desc: "Teknologi pendingin terpercaya dengan akurasi suhu tinggi untuk cold chain." },
+  {
+    src: "/images/hero/hero-topre-3.jpg",
+    alt: "Refrigerated vehicle",
+    title: "Integrated Refrigerated Vehicle",
+    desc: "Solusi kendaraan pendingin untuk kebutuhan distribusi frozen, chilled, dan cold chain.",
+  },
+  {
+    src: "/images/hero/hero-topre-2.webp",
+    alt: "Box pendingin Topre",
+    title: "FL Series & XV Series",
+    desc: "Teknologi pendingin terpercaya dengan akurasi suhu tinggi untuk cold chain.",
+  },
+  {
+    src: "/images/hero/hero-topre-1.jpg",
+    alt: "Refrigerated truck",
+    title: "FL Series & XV Series",
+    desc: "Teknologi pendingin terpercaya dengan akurasi suhu tinggi untuk cold chain.",
+  },
 ];
 
 export default function HeroSection() {
   const [activeImage, setActiveImage] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
+  const autoSlideInterval = useRef<NodeJS.Timeout | null>(null);
+  const touchStartX = useRef(0);
+  const touchEndX = useRef(0);
+  const totalImages = heroImages.length;
 
+  // Auto slide (fade)
   useEffect(() => {
-    const interval = window.setInterval(() => {
-      setActiveImage((current) => (current + 1) % heroImages.length);
-    }, 5000);
-    return () => window.clearInterval(interval);
-  }, []);
+    if (totalImages > 1 && !isHovered) {
+      autoSlideInterval.current = setInterval(() => {
+        setActiveImage((prev) => (prev + 1) % totalImages);
+      }, 5000);
+    } else if (autoSlideInterval.current) {
+      clearInterval(autoSlideInterval.current);
+    }
+    return () => {
+      if (autoSlideInterval.current) clearInterval(autoSlideInterval.current);
+    };
+  }, [totalImages, isHovered]);
+
+  // Fungsi navigasi manual (dipanggil oleh swipe)
+  const handlePrev = () => {
+    if (totalImages <= 1) return;
+    setActiveImage((prev) => (prev === 0 ? totalImages - 1 : prev - 1));
+  };
+
+  const handleNext = () => {
+    if (totalImages <= 1) return;
+    setActiveImage((prev) => (prev + 1) % totalImages);
+  };
+
+  // Swipe touch (mobile)
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+  const handleTouchMove = (e: React.TouchEvent) => {
+    touchEndX.current = e.touches[0].clientX;
+  };
+  const handleTouchEnd = () => {
+    const delta = touchEndX.current - touchStartX.current;
+    if (Math.abs(delta) > 50) {
+      if (delta > 0) handlePrev();
+      else handleNext();
+    }
+    touchStartX.current = 0;
+    touchEndX.current = 0;
+  };
 
   return (
     <section id="beranda" className="bg-[#ffffff] pt-[80px] pb-[96px] lg:pt-[140px] lg:pb-[140px] overflow-hidden">
       <div className="mx-auto max-w-[1400px] px-6 lg:px-12 grid items-center gap-[64px] lg:grid-cols-[1fr_1fr]">
-        
-        {/* Animasi Konten Kiri */}
-        <motion.div 
+        {/* Konten Kiri */}
+        <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -57,8 +110,8 @@ export default function HeroSection() {
 
           <div className="mx-auto mt-[48px] grid max-w-xl gap-[20px] text-left lg:mx-0">
             {bullets.map((bullet, i) => (
-              <motion.div 
-                key={bullet} 
+              <motion.div
+                key={bullet}
                 initial={{ opacity: 0, x: -20 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 transition={{ delay: i * 0.2 }}
@@ -85,32 +138,54 @@ export default function HeroSection() {
           </div>
         </motion.div>
 
-        {/* Animasi Carousel Kanan */}
-        <motion.div 
+        {/* Carousel Kanan - Card style product gallery, tanpa panah */}
+        <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           whileInView={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8, delay: 0.3 }}
           className="relative mx-auto w-full max-w-[640px]"
         >
-          <div className="relative aspect-[4/3] w-full overflow-hidden rounded-[40px] bg-[#f1f4f7] shadow-2xl">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeImage}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.8 }}
-                className="absolute inset-0"
-              >
-                <Image src={heroImages[activeImage].src} alt={heroImages[activeImage].alt} fill className="object-cover" />
-                <div className="absolute bottom-[32px] left-[32px] right-[32px]">
-                  <div className="rounded-[32px] bg-white/90 p-[32px] border border-white backdrop-blur-md">
-                    <p className="text-[16px] font-bold uppercase tracking-[0.2em] text-[#0064e0] mb-[8px]">{heroImages[activeImage].title}</p>
-                    <p className="text-[18px] font-medium leading-[1.5] text-[#0a1317]">{heroImages[activeImage].desc}</p>
-                  </div>
-                </div>
-              </motion.div>
-            </AnimatePresence>
+          <div
+            className="group relative bg-white border border-slate-200 rounded-[32px] shadow-sm transition-all hover:shadow-xl hover:border-[#0064e0] overflow-hidden"
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+          >
+            {/* Area gambar dengan swipe */}
+            <div
+              className="relative aspect-[4/3] w-full overflow-hidden select-none"
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
+              style={{ touchAction: "pan-y pinch-zoom" }}
+            >
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeImage}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.8 }}
+                  className="absolute inset-0"
+                >
+                  <Image
+                    src={heroImages[activeImage].src}
+                    alt={heroImages[activeImage].alt}
+                    fill
+                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                </motion.div>
+              </AnimatePresence>
+            </div>
+
+            {/* Teks di luar gambar (menempel di bawah) */}
+            <div className="p-6">
+              <p className="text-[14px] font-black uppercase tracking-[0.2em] text-[#0064e0] mb-2">
+                {heroImages[activeImage].title}
+              </p>
+              <p className="text-[16px] font-medium leading-[1.5] text-[#0a1317]">
+                {heroImages[activeImage].desc}
+              </p>
+            </div>
           </div>
         </motion.div>
       </div>
