@@ -30,10 +30,10 @@ const GALLERY_DATA = [
     body: "Refrigerated Box",
     desc: "Solusi logistik menengah dengan efisiensi bahan bakar optimal.",
     images: [
-      "/images/product/mitsubishi/1_Mitsubishi_FE_71_L.jpeg",
-      "/images/product/mitsubishi/2_Mitsubishi_FE_71_L.jpeg",
-      "/images/product/mitsubishi/3_Mitsubishi_FE_71_L.jpeg",
-      "/images/product/mitsubishi/4_Mitsubishi_FE_71_L.jpeg",
+      "/images/product/mitsubishi/1_mitsubishi_FE_71_L.jpeg",
+      "/images/product/mitsubishi/2_mitsubishi_FE_71_L.jpeg",
+      "/images/product/mitsubishi/3_mitsubishi_FE_71_L.jpeg",
+      "/images/product/mitsubishi/4_mitsubishi_FE_71_L.jpeg",
     ],
   },
   {
