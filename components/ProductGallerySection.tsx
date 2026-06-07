@@ -57,11 +57,11 @@ const GALLERY_DATA = [
     body: "Freezer Box",
     desc: "Truk ringan tangguh untuk distribusi cold chain antarkota.",
     images: [
-      "/images/product/mitsubishi/1_Mitsubishi_l300.jpeg",
-      "/images/product/mitsubishi/2_Mitsubishi_l300.jpeg",
-      "/images/product/mitsubishi/3_Mitsubishi_l300.jpeg",
-      "/images/product/mitsubishi/4_Mitsubishi_l300.jpeg",
-      "/images/product/mitsubishi/5_Mitsubishi_l300.jpeg",
+      "/images/product/mitsubishi/1_mitsubishi_l300.jpeg",
+      "/images/product/mitsubishi/2_mitsubishi_l300.jpeg",
+      "/images/product/mitsubishi/3_mitsubishi_l300.jpeg",
+      "/images/product/mitsubishi/4_mitsubishi_l300.jpeg",
+      "/images/product/mitsubishi/5_mitsubishi_l300.jpeg",
     ],
   },
 ];
