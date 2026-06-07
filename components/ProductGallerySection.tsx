@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -9,7 +9,6 @@ import { BrandMark } from "@/components/icons";
 
 const BRANDS = ["Semua", "Hino", "Mitsubishi", "Isuzu", "Lainnya"];
 
-// Data produk dengan array gambar (minimal 2 gambar agar carousel terasa)
 const GALLERY_DATA = [
   {
     id: 1,
@@ -68,44 +67,146 @@ const GALLERY_DATA = [
   },
 ];
 
-// Komponen card dengan carousel internal
 const ProductCard = ({ item }: { item: typeof GALLERY_DATA[0] }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
+  const [direction, setDirection] = useState(0); // -1 = prev, 1 = next
+  const [animationType, setAnimationType] = useState<"slide" | "fade">("fade");
   const totalImages = item.images.length;
+  const autoSlideInterval = useRef<NodeJS.Timeout | null>(null);
+  const touchStartX = useRef(0);
+  const touchEndX = useRef(0);
+  const mouseStartX = useRef(0);
+  const isDragging = useRef(false);
 
-  const handlePrev = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  // Auto slide (fade)
+  useEffect(() => {
+    if (totalImages > 1 && !isHovered) {
+      autoSlideInterval.current = setInterval(() => {
+        setAnimationType("fade");
+        setCurrentIndex((prev) => (prev + 1) % totalImages);
+      }, 5000);
+    } else if (autoSlideInterval.current) {
+      clearInterval(autoSlideInterval.current);
+    }
+    return () => {
+      if (autoSlideInterval.current) clearInterval(autoSlideInterval.current);
+    };
+  }, [totalImages, isHovered]);
+
+  const handlePrev = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    setDirection(-1);
+    setAnimationType("slide");
     setCurrentIndex((prev) => (prev === 0 ? totalImages - 1 : prev - 1));
   };
 
-  const handleNext = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleNext = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    setDirection(1);
+    setAnimationType("slide");
     setCurrentIndex((prev) => (prev === totalImages - 1 ? 0 : prev + 1));
   };
 
+  // Swipe touch
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+  const handleTouchMove = (e: React.TouchEvent) => {
+    touchEndX.current = e.touches[0].clientX;
+  };
+  const handleTouchEnd = () => {
+    const delta = touchEndX.current - touchStartX.current;
+    if (Math.abs(delta) > 50) {
+      if (delta > 0) handlePrev();
+      else handleNext();
+    }
+    touchStartX.current = 0;
+    touchEndX.current = 0;
+  };
+
+  // Swipe mouse
+  const handleMouseDown = (e: React.MouseEvent) => {
+    isDragging.current = true;
+    mouseStartX.current = e.clientX;
+    e.preventDefault();
+  };
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging.current) return;
+    const delta = e.clientX - mouseStartX.current;
+    if (Math.abs(delta) > 50) {
+      if (delta > 0) handlePrev();
+      else handleNext();
+      isDragging.current = false;
+    }
+  };
+  const handleMouseUp = () => {
+    isDragging.current = false;
+  };
+
+  // Animasi variants berdasarkan tipe dan arah
+  const getInitial = () => {
+    if (animationType === "fade") return { opacity: 0 };
+    return { x: direction === 1 ? 300 : -300, opacity: 1 };
+  };
+  const getAnimate = () => ({ x: 0, opacity: 1 });
+  const getExit = () => {
+    if (animationType === "fade") return { opacity: 0 };
+    return { x: direction === 1 ? -300 : 300, opacity: 0 };
+  };
+
   return (
-    <div className="group flex flex-col rounded-[32px] border border-slate-200 bg-white shadow-sm overflow-hidden transition-all hover:shadow-xl hover:border-[#0064e0]">
-      {/* Gambar carousel */}
-      <div className="relative aspect-[16/10] w-full overflow-hidden">
-        <Image
-          src={item.images[currentIndex]}
-          alt={`${item.name} - gambar ${currentIndex + 1}`}
-          fill
-          className="object-cover transition-transform duration-700 group-hover:scale-105"
-        />
-        {/* Tombol panah kiri/kanan */}
+    <div
+      className="group flex flex-col rounded-[32px] border border-slate-200 bg-white shadow-sm overflow-hidden transition-all hover:shadow-xl hover:border-[#0064e0]"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <div
+        className="relative aspect-[16/10] w-full overflow-hidden select-none"
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        style={{ touchAction: "pan-y pinch-zoom" }}
+      >
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentIndex}
+            initial={getInitial()}
+            animate={getAnimate()}
+            exit={getExit()}
+            transition={{ duration: 0.5, ease: "easeInOut" }}
+            className="relative w-full h-full"
+          >
+            <Image
+              src={item.images[currentIndex]}
+              alt={`${item.name} - gambar ${currentIndex + 1}`}
+              fill
+              className="object-cover transition-transform duration-700 group-hover:scale-105"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              priority={currentIndex === 0}
+              onError={(e) => {
+                // Fallback jika gambar gagal load
+                (e.target as HTMLImageElement).src = "/images/placeholder.jpg";
+              }}
+            />
+          </motion.div>
+        </AnimatePresence>
+
         {totalImages > 1 && (
           <>
             <button
               onClick={handlePrev}
-              className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/30 backdrop-blur-sm flex items-center justify-center text-white hover:bg-black/50 transition-all focus:outline-none z-10"
+              className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 max-sm:w-10 max-sm:h-10 rounded-full bg-black/30 backdrop-blur-sm flex items-center justify-center text-white hover:bg-black/50 transition-all focus:outline-none z-10 touch-manipulation"
               aria-label="Gambar sebelumnya"
             >
               <ChevronLeft size={18} />
             </button>
             <button
               onClick={handleNext}
-              className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/30 backdrop-blur-sm flex items-center justify-center text-white hover:bg-black/50 transition-all focus:outline-none z-10"
+              className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 max-sm:w-10 max-sm:h-10 rounded-full bg-black/30 backdrop-blur-sm flex items-center justify-center text-white hover:bg-black/50 transition-all focus:outline-none z-10 touch-manipulation"
               aria-label="Gambar berikutnya"
             >
               <ChevronRight size={18} />
@@ -141,7 +242,6 @@ export default function ProductGallerySection() {
   return (
     <section id="galeri" className="py-20 lg:py-32 bg-[#f8fafc]">
       <div className="section-container">
-        {/* Logo Section */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -166,7 +266,6 @@ export default function ProductGallerySection() {
           />
         </motion.div>
 
-        {/* Filter Tabs */}
         <div className="mb-12 flex flex-wrap items-center justify-center gap-3">
           {BRANDS.map((brand) => (
             <button
@@ -183,7 +282,6 @@ export default function ProductGallerySection() {
           ))}
         </div>
 
-        {/* Gallery Grid */}
         <motion.div layout className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
           <AnimatePresence mode="popLayout">
             {filteredData.map((item) => (
