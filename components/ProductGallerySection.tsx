@@ -50,20 +50,6 @@ const GALLERY_DATA = [
       "/images/product/isuzu/5_Isuzu_Elf.jpeg",
     ],
   },
-  {
-    id: 4,
-    brand: "Mitsubishi",
-    name: "Mitsubishi L300",
-    body: "Freezer Box",
-    desc: "Truk ringan tangguh untuk distribusi cold chain antarkota.",
-    images: [
-      "/images/product/mitsubishi/1_mitsubishi_l300.jpeg",
-      "/images/product/mitsubishi/2_mitsubishi_l300.jpeg",
-      "/images/product/mitsubishi/3_mitsubishi_l300.jpeg",
-      "/images/product/mitsubishi/4_mitsubishi_l300.jpeg",
-      "/images/product/mitsubishi/5_mitsubishi_l300.jpeg",
-    ],
-  },
 ];
 
 const ProductCard = ({ item }: { item: typeof GALLERY_DATA[0] }) => {
