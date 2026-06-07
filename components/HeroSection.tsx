@@ -78,7 +78,7 @@ export default function HeroSection() {
               Konsultasi via WhatsApp
             </ButtonLink>
 
-            <ButtonLink href="#inquiry" className="w-full sm:w-auto bg-white text-black border-[3px] border-black rounded-full px-[40px] py-[18px] font-bold hover:bg-[#0064e0] hover:text-white hover:border-[#0064e0] transition-all flex items-center justify-center">
+            <ButtonLink href="#inquiry" className="w-full justify-center rounded-full bg-[#0064e0] text-[16px] font-black text-white hover:bg-[#0457cb] transition">
               Isi Form Inquiry
               <ArrowRightIcon className="ml-[12px] h-[20px] w-[20px]" />
             </ButtonLink>

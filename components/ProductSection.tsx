@@ -11,13 +11,13 @@ const PRODUCTS = [
     title: "FL Series",
     badge: "Reliable Cooling",
     desc: "Sistem pendingin standar untuk kebutuhan distribusi frozen dan chilled dengan efisiensi energi yang optimal.",
-    image: "https://images.unsplash.com/photo-1586528116311-ad8dd3c8317d?auto=format&fit=crop&q=80&w=800",
+    image: "/images/FLSeries.png",
   },
   {
     title: "XV Series",
     badge: "High Performance",
     desc: "Teknologi pendingin premium untuk kontrol suhu yang sangat akurat, ideal bagi industri farmasi & makanan sensitif.",
-    image: "https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?auto=format&fit=crop&q=80&w=800",
+    image: "/images/XVSeries.png",
   },
   {
     title: "Custom Insulated Box",
@@ -85,9 +85,6 @@ export default function ProductSection() {
               {/* Content Area */}
               <div className="p-8 flex flex-col flex-grow">
                 <div className="mb-6 flex items-center justify-between gap-4">
-                  <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#f1f4f7] text-[#0064e0] group-hover:bg-[#0064e0] group-hover:text-white transition-colors">
-                    <SnowIcon className="h-7 w-7" />
-                  </div>
                   <span className="rounded-full border border-[#e2e8f0] bg-[#f1f4f7] px-4 py-1.5 text-[12px] font-black uppercase tracking-wider text-[#0064e0]">
                     {product.badge}
                   </span>
